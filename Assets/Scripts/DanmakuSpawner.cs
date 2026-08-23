@@ -1,151 +1,106 @@
-using System.Collections;
 using UnityEngine;
 
 public class DanmakuSpawner : MonoBehaviour
 {
-    [Header("Pool Tag Configuration")]
-    public string bulletPoolTag = "EnemyBullet";
+    [Header("Active Pattern Configuration")]
+    [Tooltip("Gán asset ScriptableObject dạng bắn vào đây (Tạo từ Create -> Danmaku -> Patterns)")]
+    public BulletPatternSO activePattern;
 
-    [Header("Target Target (Bắn đuổi Player)")]
-    public Transform playerTransform;
+    [Header("Targeting")]
+    [Tooltip("Transform mục tiêu (ví dụ: Player) dành cho các pattern bắn đuổi")]
+    public Transform targetTransform;
 
-    [Header("Bullet Speed Settings")]
-    public float bulletSpeed = 7f;
+    [Header("Auto Play")]
+    public bool autoStartFiring = true;
 
-    [Header("Firing Rate (Seconds)")]
-    public float fireRate = 0.08f;
-
-    private Coroutine activePattern;
+    private Coroutine firingCoroutine;
 
     void Start()
     {
-        // Mặc định chạy thử nghiệm quỹ đạo Xoắn ốc kép khi Play
-        StartPattern("radial");
-    }
-
-    // Bắt đầu một pattern cụ thể
-    public void StartPattern(string patternType)
-    {
-        StopActivePattern();
-
-        switch (patternType.ToLower())
+        if (autoStartFiring && activePattern != null)
         {
-            case "radial":
-                activePattern = StartCoroutine(FireRadialPatternRoutine(24));
-                break;
-            case "spiral":
-                activePattern = StartCoroutine(FireSpiralPatternRoutine());
-                break;
-            case "spiral_double":
-                activePattern = StartCoroutine(FireDoubleSpiralPatternRoutine());
-                break;
+            StartFiring();
         }
     }
 
-    // Dừng pattern hiện tại
-    public void StopActivePattern()
+    /// <summary>
+    /// Bắt đầu bắn theo activePattern đang gán.
+    /// </summary>
+    public void StartFiring()
     {
+        StopFiring();
+
         if (activePattern != null)
         {
-            StopCoroutine(activePattern);
-            activePattern = null;
+            firingCoroutine = StartCoroutine(activePattern.ExecutePattern(this, targetTransform));
+        }
+        else
+        {
+            Debug.LogWarning($"[DanmakuSpawner] Chưa gán ActivePattern trên GameObject: {gameObject.name}");
         }
     }
 
-    // 1. Quỹ đạo Vòng tròn (Radial Ring)
-    private IEnumerator FireRadialPatternRoutine(int bulletCount)
+    /// <summary>
+    /// Đổi dạng bắn linh hoạt ngay trong game (rất phù hợp cho Boss chuyển Phase / Spellcard).
+    /// </summary>
+    public void SetPattern(BulletPatternSO newPattern, bool startImmediately = true)
     {
-        while (true)
+        activePattern = newPattern;
+        if (startImmediately)
         {
-            float angleStep = 360f / bulletCount;
-            float angle = 0f;
-
-            for (int i = 0; i < bulletCount; i++)
-            {
-                SpawnBulletAtAngle(angle);
-                angle += angleStep;
-            }
-
-            yield return new WaitForSeconds(1.2f); // Bắn vòng mới sau mỗi 1.2s
+            StartFiring();
         }
     }
 
-    // 2. Quỹ đạo Xoắn ốc đơn (Single Spiral)
-    private IEnumerator FireSpiralPatternRoutine()
+    /// <summary>
+    /// Dừng bắn pattern hiện tại.
+    /// </summary>
+    public void StopFiring()
     {
-        float angle = 0f;
-        while (true)
+        if (firingCoroutine != null)
         {
-            SpawnBulletAtAngle(angle);
-
-            angle += 7f; // Góc lệch viên tiếp theo
-            if (angle >= 360f) angle -= 360f;
-
-            yield return new WaitForSeconds(fireRate);
+            StopCoroutine(firingCoroutine);
+            firingCoroutine = null;
         }
     }
 
-    // 3. Quỹ đạo Xoắn ốc kép (Double Spiral)
-    private IEnumerator FireDoubleSpiralPatternRoutine()
+    /// <summary>
+    /// Helper method bắn đạn đơn giản.
+    /// </summary>
+    public void SpawnBulletDirection(float angleDegrees, float speed, string poolTag)
     {
-        float angle = 0f;
-        while (true)
-        {
-            // Bắn 2 viên đối xứng nhau qua tâm (lệch 180 độ)
-            SpawnBulletAtAngle(angle);
-            SpawnBulletAtAngle(angle + 180f);
-
-            angle += 5f; // Góc lệch xoay tiếp theo
-            if (angle >= 360f) angle -= 360f;
-
-            yield return new WaitForSeconds(fireRate);
-        }
+        SpawnBulletCustom(transform.position, angleDegrees, speed, poolTag, 0f, 0f, 0f, false, null, 1f);
     }
 
-    // 4. Bắn ngắm trực diện Player (N-Way targeted pattern)
-    // Bạn có thể gọi hàm này trực tiếp từ các sự kiện hoặc script AI của Enemy
-    public void FireTargetedPattern(int streamCount, float spreadAngle)
+    /// <summary>
+    /// Helper method bắn đạn nâng cao cơ bản.
+    /// </summary>
+    public void SpawnBulletAdvanced(float angleDegrees, float speed, string poolTag, float curveSpeed = 0f, float delayTime = 0f, bool aimOnLaunch = false, Transform target = null)
     {
-        if (playerTransform == null)
-        {
-            Debug.LogWarning("Chưa gán PlayerTransform để định hướng bắn.");
-            return;
-        }
-
-        // Tính toán góc hướng tới Player
-        Vector2 dirToPlayer = playerTransform.position - transform.position;
-        float baseAngle = Mathf.Atan2(dirToPlayer.y, dirToPlayer.x) * Mathf.Rad2Deg;
-
-        float startAngle = baseAngle - (spreadAngle / 2f);
-        float angleStep = streamCount > 1 ? spreadAngle / (streamCount - 1) : 0f;
-
-        for (int i = 0; i < streamCount; i++)
-        {
-            float currentAngle = startAngle + (angleStep * i);
-            SpawnBulletAtAngle(currentAngle);
-        }
+        SpawnBulletCustom(transform.position, angleDegrees, speed, poolTag, curveSpeed, 0f, delayTime, aimOnLaunch, target, 1f);
     }
 
-    // Lấy đạn từ Pool ra và cấu hình thông số bay theo góc mong muốn
-    private void SpawnBulletAtAngle(float angle)
+    /// <summary>
+    /// Helper method bắn đạn linh hoạt đầy đủ tùy chỉnh (Vị trí, Tỏa đạn, Đóng băng, Nhắm bắn, Tốc độ phóng).
+    /// </summary>
+    public void SpawnBulletCustom(Vector3 spawnPosition, float angleDegrees, float speed, string poolTag, float curveSpeed = 0f, float expandTime = 0f, float freezeTime = 0f, bool aimOnLaunch = false, Transform target = null, float launchSpeedMult = 1f)
     {
         if (ObjectPool.Instance == null)
         {
-            Debug.LogError("Chưa kéo thả ObjectPool script vào Game Object nào trong Scene!");
+            Debug.LogError("[DanmakuSpawner] Chưa khởi tạo ObjectPool trong Scene!");
             return;
         }
 
-        // Đổi góc sang Vector hướng di chuyển
-        float radian = angle * Mathf.Deg2Rad;
+        float radian = angleDegrees * Mathf.Deg2Rad;
         Vector3 direction = new Vector3(Mathf.Cos(radian), Mathf.Sin(radian), 0f);
 
-        GameObject bulletObj = ObjectPool.Instance.SpawnFromPool(bulletPoolTag, transform.position, Quaternion.identity);
+        GameObject bulletObj = ObjectPool.Instance.SpawnFromPool(poolTag, spawnPosition, Quaternion.identity);
         if (bulletObj != null)
         {
             Bullet bulletScript = bulletObj.GetComponent<Bullet>();
             if (bulletScript != null)
             {
-                bulletScript.Initialize(direction, bulletSpeed, bulletPoolTag);
+                bulletScript.Initialize(direction, speed, poolTag, curveSpeed, expandTime, freezeTime, aimOnLaunch, target, launchSpeedMult);
             }
         }
     }

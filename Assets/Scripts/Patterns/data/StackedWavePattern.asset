@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 459ceaaad6a686347ae8733b8177bc6b, type: 3}
+  m_Name: StackedWavePattern
+  m_EditorClassIdentifier: 
+  patternName: Default Pattern
+  bulletPoolTag: EnemyBullet
+  bulletSpeed: 7
+  fireRate: 0.08
+  isLooping: 1
+  layerCount: 3
+  bulletsPerRing: 20
+  maxSpeed: 10
+  minSpeed: 5
+  layerAngleOffset: 9
+  waveInterval: 1.5
