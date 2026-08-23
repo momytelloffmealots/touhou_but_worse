@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   patternName: Default Pattern
   bulletPoolTag: EnemyBullet
-  bulletSpeed: 7
-  fireRate: 0.08
+  bulletSpeed: 5
+  fireRate: 0.01
   isLooping: 1
   layerCount: 3
-  bulletsPerRing: 20
+  bulletsPerRing: 100
   maxSpeed: 10
-  minSpeed: 5
+  minSpeed: 2
   layerAngleOffset: 9
   waveInterval: 1.5

@@ -15,8 +15,8 @@ MonoBehaviour:
   patternName: Default Pattern
   bulletPoolTag: EnemyBullet
   bulletSpeed: 7
-  fireRate: 0.08
+  fireRate: 0.01
   isLooping: 1
-  curveAngularSpeed: 45
+  curveAngularSpeed: 100
   streamCount: 4
   emitterSpinSpeed: 12
