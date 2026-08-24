@@ -3,7 +3,14 @@ guid: fbfe44fa13a72534d9cfa32f7918a1cc
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - firePointHead: {instanceID: 0}
+  - firePointLeft: {instanceID: 0}
+  - firePointRight: {instanceID: 0}
+  - straightShotPrefab: {fileID: 6813595422425364984, guid: 63179fdbcaebc5641a06aa967d189ce7, type: 3}
+  - diagonalShotPrefab: {fileID: 2370079319486530296, guid: 88a0760a182ad574f99678900cbcb64b, type: 3}
+  - homingShotPrefab: {fileID: 9062075407062088454, guid: 6b4d7010d1e1a4341a6c9d12ad4c0e4b, type: 3}
+  - cannonballPrefab: {fileID: 4593866681313397071, guid: 4cfb7254bad8b7743b1eaf50e5f3b80f, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
