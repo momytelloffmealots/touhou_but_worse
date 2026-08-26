@@ -96,7 +96,7 @@ public class EnemyBullet : MonoBehaviour
         return transform.position.magnitude > 30f;
     }
 
-    private void ReturnToPool()
+    public void ReturnToPool()
     {
         if (ObjectPool.Instance != null && !string.IsNullOrEmpty(poolTag))
         {
