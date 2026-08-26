@@ -4,7 +4,7 @@ public class DanmakuSpawner : MonoBehaviour
 {
     [Header("Active Pattern Configuration")]
     [Tooltip("Gán asset ScriptableObject dạng bắn vào đây (Tạo từ Create -> Danmaku -> Patterns)")]
-    public BulletPatternSO activePattern;
+    public BulletPatternSO BulletPattern;
 
     [Header("Targeting")]
     [Tooltip("Transform mục tiêu (ví dụ: Player) dành cho các pattern bắn đuổi")]
@@ -17,26 +17,26 @@ public class DanmakuSpawner : MonoBehaviour
 
     void Start()
     {
-        if (autoStartFiring && activePattern != null)
+        if (autoStartFiring && BulletPattern != null)
         {
             StartFiring();
         }
     }
 
     /// <summary>
-    /// Bắt đầu bắn theo activePattern đang gán.
+    /// Bắt đầu bắn theo BulletPattern đang gán.
     /// </summary>
     public void StartFiring()
     {
         StopFiring();
 
-        if (activePattern != null)
+        if (BulletPattern != null)
         {
-            firingCoroutine = StartCoroutine(activePattern.ExecutePattern(this, targetTransform));
+            firingCoroutine = StartCoroutine(BulletPattern.ExecutePattern(this, targetTransform));
         }
         else
         {
-            Debug.LogWarning($"[DanmakuSpawner] Chưa gán ActivePattern trên GameObject: {gameObject.name}");
+            Debug.LogWarning($"[DanmakuSpawner] Chưa gán BulletPattern trên GameObject: {gameObject.name}");
         }
     }
 
@@ -45,7 +45,7 @@ public class DanmakuSpawner : MonoBehaviour
     /// </summary>
     public void SetPattern(BulletPatternSO newPattern, bool startImmediately = true)
     {
-        activePattern = newPattern;
+        BulletPattern = newPattern;
         if (startImmediately)
         {
             StartFiring();
@@ -97,7 +97,7 @@ public class DanmakuSpawner : MonoBehaviour
         GameObject bulletObj = ObjectPool.Instance.SpawnFromPool(poolTag, spawnPosition, Quaternion.identity);
         if (bulletObj != null)
         {
-            Bullet bulletScript = bulletObj.GetComponent<Bullet>();
+            EnemyBullet bulletScript = bulletObj.GetComponent<EnemyBullet>();
             if (bulletScript != null)
             {
                 bulletScript.Initialize(direction, speed, poolTag, curveSpeed, expandTime, freezeTime, aimOnLaunch, target, launchSpeedMult);
