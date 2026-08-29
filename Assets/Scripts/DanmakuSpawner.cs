@@ -3,7 +3,6 @@ using UnityEngine;
 public class DanmakuSpawner : MonoBehaviour
 {
     [Header("Active Pattern Configuration")]
-    [Tooltip("Gán asset ScriptableObject dạng bắn vào đây (Tạo từ Create -> Danmaku -> Patterns)")]
     public BulletPatternSO BulletPattern;
 
     [Header("Targeting")]

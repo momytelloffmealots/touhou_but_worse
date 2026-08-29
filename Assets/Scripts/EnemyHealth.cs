@@ -1,10 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
-
-/// <summary>
-/// Quản lý HP, nhận sát thương từ PlayerBullet, hiệu ứng nháy màu và cái chết của Enemy / Boss.
-/// </summary>
 public class EnemyHealth : MonoBehaviour
 {
     [Header("Health Configuration")]
@@ -23,6 +19,8 @@ public class EnemyHealth : MonoBehaviour
 
     private Color originalColor;
     private Coroutine flashCoroutine;
+    [Header("Score Settings")]
+    public int scoreValue = 100; // Số điểm nhận được khi diệt Enemy này
 
     void Awake()
     {
@@ -45,10 +43,7 @@ public class EnemyHealth : MonoBehaviour
             spriteRenderer.color = originalColor;
         }
     }
-
-    /// <summary>
     /// Trừ HP của Enemy khi trúng sát thương.
-    /// </summary>
     public void TakeDamage(float damage)
     {
         if (currentHealth <= 0f) return;
@@ -70,7 +65,6 @@ public class EnemyHealth : MonoBehaviour
             Die();
         }
     }
-
     private IEnumerator FlashRoutine()
     {
         spriteRenderer.color = hitColor;
@@ -78,14 +72,18 @@ public class EnemyHealth : MonoBehaviour
         spriteRenderer.color = originalColor;
     }
 
+
     private void Die()
     {
         OnEnemyDeath?.Invoke();
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.AddScore(scoreValue);
+        }
 
         // Ẩn Enemy khi tiêu diệt (hoặc trả về ObjectPool)
         gameObject.SetActive(false);
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Va chạm với đạn của Player (Tag "PlayerBullet" hoặc component PlayerBullet)

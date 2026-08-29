@@ -10,24 +10,16 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
 
     [Header("Player Lives UI")]
-    [Tooltip("Text hiển thị số mạng (Hỗ trợ TextMeshPro)")]
     public TextMeshProUGUI livesText;
-    [Tooltip("Text hiển thị số mạng (Hỗ trợ UI Text thường)")]
-    public Text livesTextLegacy;
 
     [Header("Boss Health Bar UI")]
-    [Tooltip("Thanh Slider máu của Boss")]
     public Slider bossHealthSlider;
-    [Tooltip("Panel/GameObject chứa thanh máu Boss để ẩn/hiện")]
-    public GameObject bossHealthContainer;
 
     [Header("Score UI")]
     public TextMeshProUGUI scoreText;
-    public Text scoreTextLegacy;
     private int currentScore = 0;
 
     [Header("Game Over UI")]
-    [Tooltip("Panel màn hình Game Over hiển thị khi thua")]
     public GameObject gameOverPanel;
 
     void Awake()
@@ -35,22 +27,36 @@ public class UIManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
-
     void Start()
     {
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
-        if (bossHealthContainer != null) bossHealthContainer.SetActive(false);
         UpdateScoreUI();
-    }
 
-    /// <summary>
+        // 1. Tự tìm Player và lắng nghe sự kiện Mạng & Game Over
+        PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            // Đăng ký nhận sự kiện cập nhật Mạng
+            playerHealth.OnLivesChanged.AddListener(UpdateLivesUI);
+            // Đăng ký nhận sự kiện Game Over
+            playerHealth.OnGameOver.AddListener(ShowGameOver);
+
+            // Khởi tạo hiển thị mạng ban đầu
+            UpdateLivesUI(playerHealth.currentLives);
+        }
+
+        // 2. Tự tìm Boss/Enemy và lắng nghe thanh máu Boss (nếu có Boss trong Scene lúc đầu)
+        EnemyHealth bossHealth = FindObjectOfType<EnemyHealth>();
+        if (bossHealth != null)
+        {
+            bossHealth.OnHealthChanged.AddListener(UpdateBossHealthUI);
+        }
+    }
     /// Cập nhật hiển thị số mạng Player (Gán vào Event OnLivesChanged của PlayerHealth).
-    /// </summary>
     public void UpdateLivesUI(int currentLives)
     {
         string textContent = "Lives: " + currentLives;
         if (livesText != null) livesText.text = textContent;
-        if (livesTextLegacy != null) livesTextLegacy.text = textContent;
     }
 
     /// <summary>
@@ -60,25 +66,10 @@ public class UIManager : MonoBehaviour
     {
         if (bossHealthSlider != null)
         {
-            if (bossHealthContainer != null && !bossHealthContainer.activeSelf)
-            {
-                bossHealthContainer.SetActive(true);
-            }
-
             bossHealthSlider.maxValue = maxHP;
             bossHealthSlider.value = currentHP;
-
-            // Tự ẩn thanh máu khi Boss bị tiêu diệt
-            if (currentHP <= 0f && bossHealthContainer != null)
-            {
-                bossHealthContainer.SetActive(false);
-            }
         }
     }
-
-    /// <summary>
-    /// Cộng điểm số khi tiêu diệt Enemy.
-    /// </summary>
     public void AddScore(int amount)
     {
         currentScore += amount;
@@ -89,12 +80,7 @@ public class UIManager : MonoBehaviour
     {
         string scoreFormatted = "Score: " + currentScore.ToString("D6");
         if (scoreText != null) scoreText.text = scoreFormatted;
-        if (scoreTextLegacy != null) scoreTextLegacy.text = scoreFormatted;
     }
-
-    /// <summary>
-    /// Hiển thị màn hình Game Over (Gán vào Event OnGameOver của PlayerHealth).
-    /// </summary>
     public void ShowGameOver()
     {
         if (gameOverPanel != null)
@@ -102,10 +88,6 @@ public class UIManager : MonoBehaviour
             gameOverPanel.SetActive(true);
         }
     }
-
-    /// <summary>
-    /// Hàm chơi lại màn chơi (Gán vào nút Restart trong Game Over Panel).
-    /// </summary>
     public void RestartGame()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
