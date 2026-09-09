@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   patternName: Default Pattern
   bulletPoolTag: EnemyBullet
-  bulletSpeed: 3
-  fireRate: 0.05
+  bulletSpeed: 2.4
+  fireRate: 0.055
   isLooping: 1
-  angleStep: 6
-  arms: 1
+  angleStep: 7
+  arms: 2

@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   patternName: Default Pattern
   bulletPoolTag: EnemyBullet
-  bulletSpeed: 5
+  bulletSpeed: 3.5
   fireRate: 1
   isLooping: 1
   expandDuration: 0.3
-  freezeDuration: 2
+  freezeDuration: 1.2
   spawnRadius: 0
   aimAtPlayerOnLaunch: 1
-  launchSpeedMultiplier: 1.4
-  bulletCount: 10
-  burstInterval: 1
+  launchSpeedMultiplier: 1.35
+  bulletCount: 24
+  burstInterval: 1.6

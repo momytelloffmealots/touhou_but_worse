@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using _Project._Scripts.Gameplay.Projectiles;
+
 public class EnemyHealth : MonoBehaviour
 {
     [Header("Health Configuration")]
@@ -86,23 +88,21 @@ public class EnemyHealth : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Va chạm với đạn của Player (Tag "PlayerBullet" hoặc component PlayerBullet)
-        if (collision.CompareTag("PlayerBullet") || collision.GetComponent<PlayerBullet>() != null)
+        // Va chạm với đạn của Player (Tag "PlayerBullet" hoặc có component Bullet)
+        if (collision.CompareTag("PlayerBullet") || collision.GetComponent<Bullet>() != null)
         {
-            PlayerBullet pBullet = collision.GetComponent<PlayerBullet>();
-            float damage = (pBullet != null) ? pBullet.damage : 10f;
-            
+            float damage = 1f;
+
+            Bullet bullet = collision.GetComponent<Bullet>();
+            if (bullet != null)
+            {
+                damage = bullet.Damage;
+            }
+
             TakeDamage(damage);
 
-            // Trả đạn về Pool hoặc ẩn đạn
-            if (pBullet != null)
-            {
-                pBullet.Despawn();
-            }
-            else
-            {
-                collision.gameObject.SetActive(false);
-            }
+            // Trả đạn về Pool / ẩn đạn
+            collision.gameObject.SetActive(false);
         }
     }
 }

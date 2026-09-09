@@ -5,7 +5,9 @@ public class EnemyBullet : MonoBehaviour
     private Vector3 direction;
     private float speed;
     private string poolTag;
-    private float maxLifetime = 10f;
+
+    [Tooltip("Thời gian sống tối đa trước khi tự hủy nếu chưa bay ra khỏi màn hình (giây)")]
+    public float maxLifetime = 15f;
     private float lifetimeTimer;
 
     // Advanced motion parameters
@@ -34,7 +36,11 @@ public class EnemyBullet : MonoBehaviour
 
     void Update()
     {
-        lifetimeTimer += Time.deltaTime;
+        // Chỉ đếm thời gian sống khi đạn thực sự đang di chuyển
+        if (freezeTimer <= 0f)
+        {
+            lifetimeTimer += Time.deltaTime;
+        }
 
         // Phase 1: Bay tỏa ra ban đầu trước khi đóng băng (nếu có expandTimer)
         if (expandTimer > 0f)
@@ -93,7 +99,9 @@ public class EnemyBullet : MonoBehaviour
 
     private bool IsOutOfBounds()
     {
-        return transform.position.magnitude > 30f;
+        Vector3 pos = transform.position;
+        // Đảm bảo đạn đi hoàn toàn ra khỏi màn hình ở mọi tỷ lệ khung hình (16:9, 16:10, 21:9)
+        return pos.x < -15f || pos.x > 15f || pos.y < -9f || pos.y > 9f;
     }
 
     public void ReturnToPool()

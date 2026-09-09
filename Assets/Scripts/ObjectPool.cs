@@ -99,4 +99,41 @@ public class ObjectPool : MonoBehaviour
         }
         poolDictionary[tag].Enqueue(obj);
     }
+
+    // =========================================================
+    // PLAYER BULLET POOLING (Theo Prefab)
+    // =========================================================
+    private Dictionary<GameObject, List<GameObject>> prefabPoolDictionary = new Dictionary<GameObject, List<GameObject>>();
+
+    /// <summary>
+    /// Lấy đạn từ Pool theo Prefab (dùng cho PlayerShooting). Tự động tạo thêm nếu hết.
+    /// </summary>
+    public GameObject GetPooledObject(GameObject prefab)
+    {
+        if (prefab == null) return null;
+
+        if (!prefabPoolDictionary.ContainsKey(prefab))
+        {
+            prefabPoolDictionary.Add(prefab, new List<GameObject>());
+        }
+
+        List<GameObject> poolList = prefabPoolDictionary[prefab];
+
+        // Tái sử dụng object đang tắt
+        for (int i = 0; i < poolList.Count; i++)
+        {
+            if (poolList[i] != null && !poolList[i].activeInHierarchy)
+            {
+                return poolList[i];
+            }
+        }
+
+        // Hết đạn rảnh -> tạo mới và thêm vào pool
+        GameObject newObj = Instantiate(prefab);
+        newObj.name = prefab.name + "_Pooled";
+        newObj.SetActive(false);
+        newObj.transform.SetParent(transform);
+        poolList.Add(newObj);
+        return newObj;
+    }
 }

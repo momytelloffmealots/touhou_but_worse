@@ -6,7 +6,7 @@ public class TargetedPatternSO : BulletPatternSO
 {
     [Header("Targeted Pattern Settings")]
     public int streamCount = 5;
-    public float spreadAngle = 45f;
+    public float spreadAngle = 85f;
     public float intervalBetweenBursts = 1f;
 
     public override IEnumerator ExecutePattern(DanmakuSpawner spawner, Transform target)

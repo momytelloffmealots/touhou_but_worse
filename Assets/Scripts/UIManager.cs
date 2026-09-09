@@ -19,44 +19,68 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     private int currentScore = 0;
 
+    [Header("Scene References (Kéo trực tiếp vào Inspector)")]
+    [Tooltip("Kéo PlayerHealth của Player vào đây")]
+    public PlayerHealth playerHealth;
+
+    [Tooltip("Kéo PlayerController của Player vào đây")]
+    public PlayerController playerController;
+
+    [Tooltip("Kéo PlayerShooting của Player vào đây")]
+    public PlayerShooting playerShooting;
+
+    [Tooltip("Kéo EnemyHealth của Boss vào đây")]
+    public EnemyHealth bossHealth;
+
     [Header("Game Over UI")]
     public GameObject gameOverPanel;
+    public bool IsGameOver { get; private set; }
 
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
+
     void Start()
     {
+        IsGameOver = false;
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
         UpdateScoreUI();
 
-        // 1. Tự tìm Player và lắng nghe sự kiện Mạng & Game Over
-        PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+        // 1. Lắng nghe sự kiện Mạng & Game Over của Player
+        if (playerHealth == null) playerHealth = FindObjectOfType<PlayerHealth>();
         if (playerHealth != null)
         {
-            // Đăng ký nhận sự kiện cập nhật Mạng
+            playerHealth.OnLivesChanged.RemoveListener(UpdateLivesUI);
             playerHealth.OnLivesChanged.AddListener(UpdateLivesUI);
-            // Đăng ký nhận sự kiện Game Over
+
+            playerHealth.OnGameOver.RemoveListener(ShowGameOver);
             playerHealth.OnGameOver.AddListener(ShowGameOver);
 
             // Khởi tạo hiển thị mạng ban đầu
             UpdateLivesUI(playerHealth.currentLives);
         }
 
-        // 2. Tự tìm Boss/Enemy và lắng nghe thanh máu Boss (nếu có Boss trong Scene lúc đầu)
-        EnemyHealth bossHealth = FindObjectOfType<EnemyHealth>();
+        // 2. Lắng nghe thanh máu Boss
+        if (bossHealth == null) bossHealth = FindObjectOfType<EnemyHealth>();
         if (bossHealth != null)
         {
+            bossHealth.OnHealthChanged.RemoveListener(UpdateBossHealthUI);
             bossHealth.OnHealthChanged.AddListener(UpdateBossHealthUI);
+            UpdateBossHealthUI(bossHealth.currentHealth, bossHealth.maxHealth);
         }
     }
+
+    /// <summary>
     /// Cập nhật hiển thị số mạng Player (Gán vào Event OnLivesChanged của PlayerHealth).
+    /// </summary>
     public void UpdateLivesUI(int currentLives)
     {
-        string textContent = "Lives: " + currentLives;
-        if (livesText != null) livesText.text = textContent;
+        if (livesText != null)
+        {
+            livesText.text = "Lives: " + currentLives;
+        }
     }
 
     /// <summary>
@@ -70,6 +94,7 @@ public class UIManager : MonoBehaviour
             bossHealthSlider.value = currentHP;
         }
     }
+
     public void AddScore(int amount)
     {
         currentScore += amount;
@@ -81,15 +106,33 @@ public class UIManager : MonoBehaviour
         string scoreFormatted = "Score: " + currentScore.ToString("D6");
         if (scoreText != null) scoreText.text = scoreFormatted;
     }
+
     public void ShowGameOver()
     {
+        IsGameOver = true;
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
         }
+
+        // Đảm bảo dừng cả Player khi Game Over xuất hiện
+        if (playerController == null) playerController = FindObjectOfType<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.SetPlayerControl(false);
+            playerController.enabled = false;
+        }
+
+        if (playerShooting == null) playerShooting = FindObjectOfType<PlayerShooting>();
+        if (playerShooting != null)
+        {
+            playerShooting.enabled = false;
+        }
     }
+
     public void RestartGame()
     {
+        IsGameOver = false;
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 }
