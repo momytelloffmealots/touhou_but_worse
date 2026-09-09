@@ -2108,9 +2108,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1539720899}
     - target: {fileID: 2090614195428491404, guid: 7e736c28f60a9f54fbd3d9074278bfb8, type: 3}
+      propertyPath: shootWithZ
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2090614195428491404, guid: 7e736c28f60a9f54fbd3d9074278bfb8, type: 3}
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 1544849708}
+    - target: {fileID: 2090614195428491404, guid: 7e736c28f60a9f54fbd3d9074278bfb8, type: 3}
+      propertyPath: shootWithMouse
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2486656366671588401, guid: 7e736c28f60a9f54fbd3d9074278bfb8, type: 3}
       propertyPath: rb
       value: 
