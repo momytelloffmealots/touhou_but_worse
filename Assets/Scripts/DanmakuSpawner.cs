@@ -40,25 +40,25 @@ public class DanmakuSpawner : MonoBehaviour
     private Coroutine firingCoroutine2;
     private Coroutine rotationCoroutine;
 
-    void Awake()
-    {
-#if UNITY_EDITOR
-        if (patternList == null || patternList.Count == 0)
-        {
-            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:BulletPatternSO");
-            patternList = new List<BulletPatternSO>();
-            foreach (string g in guids)
-            {
-                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(g);
-                BulletPatternSO p = UnityEditor.AssetDatabase.LoadAssetAtPath<BulletPatternSO>(path);
-                if (p != null && !path.Contains("HybridPattern") && !path.Contains("CurvedPattern"))
-                {
-                    patternList.Add(p);
-                }
-            }
-        }
-#endif
-    }
+//    void Awake()
+//    {
+//#if UNITY_EDITOR
+//        if (patternList == null || patternList.Count == 0)
+//        {
+//            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:BulletPatternSO");
+//            patternList = new List<BulletPatternSO>();
+//            foreach (string g in guids)
+//            {
+//                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(g);
+//                BulletPatternSO p = UnityEditor.AssetDatabase.LoadAssetAtPath<BulletPatternSO>(path);
+//                if (p != null && !path.Contains("HybridPattern") && !path.Contains("CurvedPattern"))
+//                {
+//                    patternList.Add(p);
+//                }
+//            }
+//        }
+//#endif
+//    }
 
     void Start()
     {

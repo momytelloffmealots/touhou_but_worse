@@ -30,7 +30,7 @@ public class EnemyWaypointMovement : MonoBehaviour
     public float gizmoRadius = 0.4f;
 
     private int currentWaypointIndex = -1;
-    private bool isMoving = false;
+    //private bool isMoving = false;
     private Coroutine movementCoroutine;
 
     void Start()
@@ -58,7 +58,7 @@ public class EnemyWaypointMovement : MonoBehaviour
             StopCoroutine(movementCoroutine);
             movementCoroutine = null;
         }
-        isMoving = false;
+        //isMoving = false;
     }
 
     private IEnumerator MoveRoutine()
@@ -80,7 +80,7 @@ public class EnemyWaypointMovement : MonoBehaviour
 
                 if (distance > 0.01f)
                 {
-                    isMoving = true;
+                    //isMoving = true;
                     float duration = distance / Mathf.Max(0.1f, moveSpeed);
                     float elapsedTime = 0f;
 
@@ -100,7 +100,7 @@ public class EnemyWaypointMovement : MonoBehaviour
                     }
 
                     transform.position = targetPos;
-                    isMoving = false;
+                    //isMoving = false;
                 }
             }
 
@@ -123,29 +123,29 @@ public class EnemyWaypointMovement : MonoBehaviour
         return newIndex;
     }
 
-    public bool IsMoving => isMoving;
+    //public bool IsMoving ;
 
     // Hiển thị trực quan các vị trí Waypoint trong cửa sổ Scene View của Unity
-    private void OnDrawGizmosSelected()
-    {
-        if (waypoints == null || waypoints.Count == 0) return;
+    //private void OnDrawGizmosSelected()
+    //{
+    //    if (waypoints == null || waypoints.Count == 0) return;
+    
+    //    Gizmos.color = gizmoColor;
 
-        Gizmos.color = gizmoColor;
+    //    for (int i = 0; i < waypoints.Count; i++)
+    //    {
+    //        if (waypoints[i] != null)
+    //        {
+    //            Gizmos.DrawWireSphere(waypoints[i].position, gizmoRadius);
 
-        for (int i = 0; i < waypoints.Count; i++)
-        {
-            if (waypoints[i] != null)
-            {
-                Gizmos.DrawWireSphere(waypoints[i].position, gizmoRadius);
-
-                for (int j = i + 1; j < waypoints.Count; j++)
-                {
-                    if (waypoints[j] != null)
-                    {
-                        Gizmos.DrawLine(waypoints[i].position, waypoints[j].position);
-                    }
-                }
-            }
-        }
-    }
+    //            for (int j = i + 1; j < waypoints.Count; j++)
+    //            {
+    //                if (waypoints[j] != null)
+    //                {
+    //                    Gizmos.DrawLine(waypoints[i].position, waypoints[j].position);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 }

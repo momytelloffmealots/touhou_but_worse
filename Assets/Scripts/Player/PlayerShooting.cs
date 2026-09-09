@@ -387,34 +387,34 @@ public class PlayerShooting : MonoBehaviour
     // UPGRADE
     // =========================================================
 
-    public void AddStraightShot(int amount)
-    {
-        currentStraightShots += amount;
-    }
+    //public void AddStraightShot(int amount)
+    //{
+    //    currentStraightShots += amount;
+    //}
 
 
-    public void AddDiagonalShot(int amount)
-    {
-        currentDiagonalShots += amount;
-    }
+    //public void AddDiagonalShot(int amount)
+    //{
+    //    currentDiagonalShots += amount;
+    //}
 
 
-    public void AddHomingShot(int amount)
-    {
-        currentHomingShots += amount;
-    }
+    //public void AddHomingShot(int amount)
+    //{
+    //    currentHomingShots += amount;
+    //}
 
 
-    // =========================================================
-    // RESET WEAPON
-    // =========================================================
+    //// =========================================================
+    //// RESET WEAPON
+    //// =========================================================
 
-    public void ResetWeapon()
-    {
-        currentStraightShots = 2;
+    //public void ResetWeapon()
+    //{
+    //    currentStraightShots = 2;
 
-        currentDiagonalShots = 1;
+    //    currentDiagonalShots = 1;
 
-        currentHomingShots = 1;
-    }
+    //    currentHomingShots = 1;
+    //}
 }
