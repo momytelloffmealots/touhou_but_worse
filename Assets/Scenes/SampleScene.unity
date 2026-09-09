@@ -297,10 +297,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.83921576, g: 0.83921576, b: 0.83921576, a: 1}
+    m_NormalColor: {r: 0.44534993, g: 1, b: 0, a: 1}
     m_HighlightedColor: {r: 0.83921576, g: 0.83921576, b: 0.83921576, a: 1}
     m_PressedColor: {r: 0.83921576, g: 0.83921576, b: 0.83921576, a: 1}
-    m_SelectedColor: {r: 0.83921576, g: 0.83921576, b: 0.83921576, a: 1}
+    m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -323,7 +323,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.432
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -653,7 +653,7 @@ Transform:
   m_GameObject: {fileID: 301463367}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.07, y: 3.36, z: 0}
+  m_LocalPosition: {x: 0, y: 3.36, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1427,7 +1427,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -2595,7 +2595,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -2905,7 +2905,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 274229876963150489, guid: 7e736c28f60a9f54fbd3d9074278bfb8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 274229876963150489, guid: 7e736c28f60a9f54fbd3d9074278bfb8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2982,6 +2982,14 @@ PrefabInstance:
     - target: {fileID: 2768361647291276260, guid: 7e736c28f60a9f54fbd3d9074278bfb8, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7114751856213209637, guid: 7e736c28f60a9f54fbd3d9074278bfb8, type: 3}
+      propertyPath: maxLives
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7114751856213209637, guid: 7e736c28f60a9f54fbd3d9074278bfb8, type: 3}
+      propertyPath: currentLives
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3229001057047803130, guid: 7e736c28f60a9f54fbd3d9074278bfb8, type: 3}
