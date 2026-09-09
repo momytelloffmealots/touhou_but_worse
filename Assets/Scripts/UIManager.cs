@@ -1,9 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Hỗ trợ cả TextMeshPro và UI Text mặc định của Unity
+using TMPro;
+using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Quản lý giao diện UI trong game: Mạng Player, Thanh máu Boss, Score và Màn hình Game Over.
+/// Quản lý UI:
+/// - Lives
+/// - Boss Health
+/// - Score
+/// - YOU WIN / YOU LOSE
+/// - Play Again
+/// - Go Back Main Menu
 /// </summary>
 public class UIManager : MonoBehaviour
 {
@@ -19,62 +26,90 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     private int currentScore = 0;
 
-    [Header("Scene References (Kéo trực tiếp vào Inspector)")]
-    [Tooltip("Kéo PlayerHealth của Player vào đây")]
+    [Header("Scene References")]
     public PlayerHealth playerHealth;
-
-    [Tooltip("Kéo PlayerController của Player vào đây")]
     public PlayerController playerController;
-
-    [Tooltip("Kéo PlayerShooting của Player vào đây")]
     public PlayerShooting playerShooting;
-
-    [Tooltip("Kéo EnemyHealth của Boss vào đây")]
     public EnemyHealth bossHealth;
 
-    [Header("Game Over UI")]
+    [Header("Game End UI")]
     public GameObject gameOverPanel;
+
+    // Chữ YOU WIN / YOU LOSE
+    public TextMeshProUGUI resultText;
+
+    // Tên Scene Main Menu
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
+
     public bool IsGameOver { get; private set; }
 
-    void Awake()
+    private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    void Start()
+    private void Start()
     {
         IsGameOver = false;
-        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+
+        // Ẩn panel lúc bắt đầu game
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(false);
+        }
+
+        // Score
         UpdateScoreUI();
 
-        // 1. Lắng nghe sự kiện Mạng & Game Over của Player
-        if (playerHealth == null) playerHealth = FindObjectOfType<PlayerHealth>();
+        // =========================
+        // PLAYER
+        // =========================
+
+        if (playerHealth == null)
+            playerHealth = FindObjectOfType<PlayerHealth>();
+
         if (playerHealth != null)
         {
             playerHealth.OnLivesChanged.RemoveListener(UpdateLivesUI);
             playerHealth.OnLivesChanged.AddListener(UpdateLivesUI);
 
-            playerHealth.OnGameOver.RemoveListener(ShowGameOver);
-            playerHealth.OnGameOver.AddListener(ShowGameOver);
+            playerHealth.OnGameOver.RemoveListener(ShowLose);
+            playerHealth.OnGameOver.AddListener(ShowLose);
 
-            // Khởi tạo hiển thị mạng ban đầu
+            // Hiển thị mạng ban đầu
             UpdateLivesUI(playerHealth.currentLives);
         }
 
-        // 2. Lắng nghe thanh máu Boss
-        if (bossHealth == null) bossHealth = FindObjectOfType<EnemyHealth>();
+        // =========================
+        // BOSS
+        // =========================
+
+        if (bossHealth == null)
+            bossHealth = FindObjectOfType<EnemyHealth>();
+
         if (bossHealth != null)
         {
             bossHealth.OnHealthChanged.RemoveListener(UpdateBossHealthUI);
             bossHealth.OnHealthChanged.AddListener(UpdateBossHealthUI);
-            UpdateBossHealthUI(bossHealth.currentHealth, bossHealth.maxHealth);
+
+            UpdateBossHealthUI(
+                bossHealth.currentHealth,
+                bossHealth.maxHealth
+            );
         }
     }
 
-    /// <summary>
-    /// Cập nhật hiển thị số mạng Player (Gán vào Event OnLivesChanged của PlayerHealth).
-    /// </summary>
+    // =====================================================
+    // LIVES
+    // =====================================================
+
     public void UpdateLivesUI(int currentLives)
     {
         if (livesText != null)
@@ -83,9 +118,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Cập nhật thanh máu Boss (Gán vào Event OnHealthChanged của EnemyHealth).
-    /// </summary>
+    // =====================================================
+    // BOSS HEALTH
+    // =====================================================
+
     public void UpdateBossHealthUI(float currentHP, float maxHP)
     {
         if (bossHealthSlider != null)
@@ -95,6 +131,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // =====================================================
+    // SCORE
+    // =====================================================
+
     public void AddScore(int amount)
     {
         currentScore += amount;
@@ -103,36 +143,103 @@ public class UIManager : MonoBehaviour
 
     private void UpdateScoreUI()
     {
-        string scoreFormatted = "Score: " + currentScore.ToString("D6");
-        if (scoreText != null) scoreText.text = scoreFormatted;
+        if (scoreText != null)
+        {
+            scoreText.text = "Score: " + currentScore.ToString("D6");
+        }
     }
 
-    public void ShowGameOver()
+    // =====================================================
+    // YOU LOSE
+    // =====================================================
+
+    public void ShowLose()
     {
+        if (IsGameOver)
+            return;
+
         IsGameOver = true;
+
+        if (resultText != null)
+        {
+            resultText.text = "YOU LOSE";
+        }
+
+        ShowGameEndPanel();
+    }
+
+    // =====================================================
+    // YOU WIN
+    // =====================================================
+
+    public void ShowWin()
+    {
+        if (IsGameOver)
+            return;
+
+        IsGameOver = true;
+
+        if (resultText != null)
+        {
+            resultText.text = "YOU WIN";
+        }
+
+        ShowGameEndPanel();
+    }
+
+    // =====================================================
+    // HIỆN PANEL
+    // =====================================================
+
+    private void ShowGameEndPanel()
+    {
+        // Hiện panel
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
         }
 
-        // Đảm bảo dừng cả Player khi Game Over xuất hiện
-        if (playerController == null) playerController = FindObjectOfType<PlayerController>();
+        // Dừng Player
+        if (playerController == null)
+            playerController = FindObjectOfType<PlayerController>();
+
         if (playerController != null)
         {
             playerController.SetPlayerControl(false);
             playerController.enabled = false;
         }
 
-        if (playerShooting == null) playerShooting = FindObjectOfType<PlayerShooting>();
+        // Dừng bắn
+        if (playerShooting == null)
+            playerShooting = FindObjectOfType<PlayerShooting>();
+
         if (playerShooting != null)
         {
             playerShooting.enabled = false;
         }
     }
 
-    public void RestartGame()
+    // =====================================================
+    // PLAY AGAIN
+    // =====================================================
+
+    public void PlayAgain()
     {
-        IsGameOver = false;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene(
+            SceneManager.GetActiveScene().name
+        );
+    }
+
+    // =====================================================
+    // GO BACK MAIN MENU
+    // =====================================================
+
+    public void GoBackMainMenu()
+    {
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 }
