@@ -75,12 +75,26 @@ public class EnemyHealth : MonoBehaviour
     }
 
 
+    //private void Die()
+    //{
+    //    OnEnemyDeath?.Invoke();
+    //    if (UIManager.Instance != null)
+    //    {
+    //        UIManager.Instance.AddScore(scoreValue);
+    //    }
+
+    //    // Ẩn Enemy khi tiêu diệt (hoặc trả về ObjectPool)
+    //    gameObject.SetActive(false);
+    //}
+
     private void Die()
     {
         OnEnemyDeath?.Invoke();
+
         if (UIManager.Instance != null)
         {
             UIManager.Instance.AddScore(scoreValue);
+            UIManager.Instance.ShowWin(); // BỔ SUNG DÒNG NÀY
         }
 
         // Ẩn Enemy khi tiêu diệt (hoặc trả về ObjectPool)
